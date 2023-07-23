@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from . import config
+import logging.config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,7 +33,13 @@ except AttributeError:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.DJANGO_DEBUG
 
-ALLOWED_HOSTS = []
+DATABASE_DIR = BASE_DIR / 'database'
+DATABASE_DIR.mkdir(exist_ok=True)
+
+ALLOWED_HOSTS = [
+    "0.0.0.0",
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -98,7 +105,7 @@ WSGI_APPLICATION = 'megano.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DATABASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -181,29 +188,52 @@ SPECTACULAR_SETTINGS = {
 # }
 
 # logging
+LOGLEVEL = "INFO"
 
-LOGGING = {
+logging.config.dictConfig({
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {
-            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-        }
+        "console": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        },
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
+            "formatter": "console",
         },
     },
-    "root": {
-        "handlers": [
-            "console",
-            # "logfile"
-        ],
-        "level": "INFO"
-    }
-}
+    "loggers": {
+        "": {
+            "level": LOGLEVEL,
+            "handlers": ["console"],
+        },
+    },
+})
+
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#         "verbose": {
+#             "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+#         }
+#     },
+#     "handlers": {
+#         "console": {
+#             "class": "logging.StreamHandler",
+#             "formatter": "verbose",
+#         },
+#     },
+#     "root": {
+#         "handlers": [
+#             "console",
+#             # "logfile"
+#         ],
+#         "level": "INFO"
+#     }
+# }
 
 
 
