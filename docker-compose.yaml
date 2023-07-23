@@ -4,10 +4,16 @@ services:
   app:
     build:
       dockerfile: ./Dockerfile
-    command: ["python","manage.py", "runserver", "0.0.0.0:8000"]
+    command: > 
+      bash -c "python manage.py migrate && 
+      python manage.py createsuperuser --email <Почта> --noinput && 
+      python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     restart: always
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=<Логин для входа в админ панель>
+      - DJANGO_SUPERUSER_PASSWORD=<Пароль для входа в админ панель>
     env_file:
       - .env
     logging:
@@ -15,7 +21,7 @@ services:
       options:
         max-file: "10"
         max-size: "200k"
-#    volumes:
-#      - ./megano/database:/app/database
+    volumes:
+      - ./megano/database:/app/database
 
 
